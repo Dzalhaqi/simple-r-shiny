@@ -1,0 +1,394 @@
+---
+title: "Prerpocessing dan Pemodelan"
+author: "Muhammad Dzalhaqi"
+date: "12/9/2021"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r include=FALSE}
+library(kableExtra)
+```
+
+
+# Preprocessing
+
+**Preprocessing Data Uji Wilcoxon**
+
+
+```{r collapse=TRUE}
+# Wilcoxon test (Comparing two related conditions) data
+sebelum <- c(25,27,20,21,18,19,20,22,24,25,24,27,23,25,22)
+sesudah <- c(26,26,22,24,22,21,24,21,26,26,25,28,25,27,25)
+
+data_wilcox = data.frame(sebelum,sesudah)
+
+kable(
+  data_wilcox,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Wilcoxon') %>%
+    kable_styling(latex_options = "striped")
+```
+
+**Preprocessing Data Uji Mann-Whitney**
+
+
+```{r collapse=TRUE}
+# Mann Whitney Signed Rank Test data
+data_mw = read.csv("data_mw.csv")
+kable(
+  data_mw,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Mann-Whitney') %>%
+    kable_styling(latex_options = "striped")
+```
+
+**Preprocessing Data Uji McNemar**
+
+```{r collapse=TRUE}
+# Mcnemar Test data
+data_mc = read.csv("smoker.csv", sep = ',')
+kable(
+  data_mc,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Mcnemar') %>%
+    kable_styling(latex_options = "striped")
+```
+
+**Preprocessing Data Uji Spearman**
+
+```{r collapse=TRUE}
+# Spearman Test data
+data_sp = read.csv('spearmans-correlation-data.csv',sep = ',')
+kable(
+  data_sp,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Spearman') %>%
+    kable_styling(latex_options = "striped")
+```
+
+**Preprocessing Data Uji Cochran**
+
+```{r collapse=TRUE}
+# Cochran Test data
+data_cochran = read.csv('les.csv', sep = ',')
+kable(
+  data_cochran,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Cochran') %>%
+    kable_styling(latex_options = "striped")
+```
+
+**Preprocessing Data Uji Kruskall-Wallis**
+
+```{r collapse=TRUE}
+# kruskall-Wallis Test data
+data_kw_base = read.csv('kruskal-wallis-test-data.csv', sep = ',')
+
+value <- c(data_kw_base$category_a,data_kw_base$category_b,data_kw_base$category_c)
+category <- c(rep(1,25),rep(2,25),rep(3,25))
+
+data_kw <- data.frame(category,value)
+
+kable(
+  data_kw_base,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Kruskall-Wallis sebelum diolah') %>%
+    kable_styling(latex_options = "striped")
+
+kable(
+  data_kw,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Kruskal-Wallis setelah diolah') %>%
+    kable_styling(latex_options = "striped")
+
+```
+
+
+**Preprocessing Data Uji Friedman**
+
+```{r collapse=TRUE}
+# Friedman Test data
+
+data_fried_base <- read.csv('Video_R.csv', sep = ',')
+
+data_fried_base_table <- data.frame(data_fried_base$Person,data_fried_base$TotalAGen,data_fried_base$TotalBdoc,data_fried_base$TotalCOld,data_fried_base$TotalDDEMO)
+
+colnames(data_fried_base_table) = c('Person','Video A', 'Video B', 'Video C', 'Video D')
+
+video_score <- c(data_fried_base$TotalAGen,data_fried_base$TotalBdoc,data_fried_base$TotalCOl,data_fried_base$TotalDDEMO)
+video_category <- c(rep(1,20),rep(2,20),rep(3,20),rep(4,20))
+
+data_fried <- data.frame(data_fried_base$Person,video_category,video_score)
+
+kable(
+  data_fried_base_table,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Friedman sebelum diolah') %>%
+    kable_styling(latex_options = "striped")
+
+kable(
+  data_fried,
+  longtable = T,
+  booktabs = T,
+  linesep = c(""),
+  caption = 'Data untuk Uji Friedman setelah diolah') %>%
+    kable_styling(latex_options = "striped")
+```
+
+# Pemodelan Statistika Deskriptif, Uji Non-Parametrik dan Visualisasi Data
+
+
+**Pemodelan Binomial**
+
+```{r collapse=TRUE}
+# binom.test(x, n, p = p_binom(), alternative = alternative_binom(), conf.level = ci_binom())
+
+binom.exact(67, 137, p = 0.47, alternative = "greater", conf.level = 0.95, tsmethod = 'central', plot = TRUE)
+```
+
+
+
+**Pemodelan Wilcoxon**
+
+
+```{r}
+result <- wilcox.test(sebelum, sesudah, paired = TRUE, correct =TRUE, conf.level = 0.95, alternative = 'two.sided')
+result
+    
+summary_data_wilcox <- summary(data_wilcox)
+summary_data_wilcox
+        
+boxplot(data_wilcox, las=1, main = 'Perbadingan berat badan anak')
+beeswarm(data_wilcox, col = 4, pch = 16, vert = TRUE,  add = TRUE)
+```
+
+
+**Pemodelan Mann-Whitney**
+
+```{r}
+result <- wilcox.test(data_mw$cortisol_level_sebelum, data_mw$cortisol_level_sesudah, paired = TRUE, correct =TRUE, conf.level = 0.95, alternative = 'two.sided')
+result
+
+boxplot(data_mw, las=1, main = 'Perbadingan hormon kortisol (mcg/dL).')
+beeswarm(data_mw, col = 4, pch = 16, vert = TRUE,  add = TRUE)
+```
+
+**Pemodelan McNemar**
+
+
+```{r}
+x <- table(data_mc)
+x <- addmargins(x)
+
+smoker <- table(data_mc)
+res1 <- mcnemar.test(smoker)
+res2 <- mcnemar.exact(smoker)
+
+McNemarChi <- paste("McNemar's chi-squared = ", round(res1[[1]][[1]],3), ", ", "df = ", res1[[2]][[1]], sep = "")
+cat(sprintf(McNemarChi), "\n")
+print(res2)
+
+makepPlot <- function() {    
+  x <- table(data_mc)
+          
+  levI <- nrow(x) 
+  levJ <- ncol(x) 
+  matrix_invers <- as.vector(t(x))
+  
+  total <- c()
+  total_rep <- c()
+  for(i in 1:levI) 
+  {
+      ds <- c()
+      for(j in 1:levJ)
+      {
+          ds <- c(ds, matrix_invers[(i-1)*levJ+j])
+      }
+      total <- c(total, sum(ds))
+      total_rep <- c(total_rep, rep(sum(ds), levJ))
+  }
+  percentage <- matrix_invers/total_rep 
+  
+  a <- c()
+  for(i in levI:1) 
+  {
+      for(j in 1:levJ)
+      {
+          a <- c(a, percentage[(i-1)*levJ+j] )
+      }
+  }
+  
+  b <- matrix(c(a), nc=levJ, by=1)
+  rownames(b) <- rev(rownames(x))
+  colnames(b) <- colnames(x)
+  
+  par(mar=c(5,6,2,4))
+  barplot(t(b), hor=1, las=1, xlab="Percentage", col=gray.colors(ncol(x)))
+  legend("bottomright", legend=colnames(b), fill=gray.colors(ncol(x)))
+}
+
+makemPlot <- function(){
+    x <- table(data_mc)
+    mosaic(x, gp = shading_max, legend=FALSE)
+}
+
+makepPlot()
+makemPlot()
+
+
+```
+
+
+**Pemodelan Spearman**
+
+```{r}
+data_spearman = as.matrix(data_sp)
+describe(data_spearman)
+
+x <- as.matrix(data_sp)
+round(cor(cbind(x), method = 'spearman', use = "pairwise.complete.obs"),3)
+
+x <- as.matrix(data_sp)
+pairs.panels(x, method = 'spearman')
+```
+
+
+**Pemodelan Kruskal-Wallis**
+
+
+```{r out.height='70%'}
+describeBy(data_kw[,2], data_kw[,1])
+KW.ranking <- function() {
+  ranked <- rank(data_kw[,2])
+       data <- data.frame(data_kw[,1], ranked)
+       n <- round(tapply(data[,2], data[,1], length),2)
+       m <- round(tapply(data[,2], data[,1], mean),2)
+       t <- round(tapply(data[,2], data[,1], sum),2)
+       ranks <- data.frame(n, m, t)
+       colnames(ranks) <- c("n","Rank Mean","Rank Sum")
+       print(ranks)
+}
+KW.ranking()
+
+result <- kruskal.test(data_kw[,2] ~ data_kw[,1])
+print(result)
+
+
+dat <- data_kw
+boxplot(data_kw$value ~ data_kw$category, las=1, horizontal = TRUE, main = 'Perbadingan hormon kortisol pasien (mcg/dL).')
+beeswarm(dat[,2] ~ dat[,1], col = 4, pch = 16, vert = TRUE,  add = TRUE)
+```
+
+
+
+**Pemodelan Cochran**
+
+
+```{r out.height='70%'}
+data.cochran <- function() {
+  dat <- data_cochran
+       dat[,1] <- factor(dat[,1])
+       data.long <- melt(dat, idvars=dat[,1])
+       x <- t(table(data.long$variable, data.long$value))
+       x <- addmargins(x)
+       print(x)
+}
+
+data.cochran()
+
+cochran.test <- function() {
+  dat <- data_cochran
+       
+       dat[,1] <- factor(dat[,1])
+       data.long <- melt(dat, idvars=dat[,1])
+       q <- symmetry_test(data.long[,3] ~ factor(data.long[,2]) | factor(data.long[,1]), data=data.long, teststat="quad")
+       
+       CochranQChi <- paste("Cochran's Q chi-squared = ", round(q@statistic@teststatistic,3), ", ", "df = ", q@statistic@df, sep = "")
+       cat(sprintf(CochranQChi), "\n")
+       
+       P.CochranQChi <- paste("p-value = ", pvalue(q), sep = "")
+       cat(sprintf(P.CochranQChi), "\n", "\n")
+       
+       
+       cat("Effect size for Cochran's Q test:", "\n")
+       eta.squared.q <- q@statistic@teststatistic / (nrow(dat) * ((ncol(dat)-1)-1))
+       ESQ <- paste("Eta-squared Q = ", round(eta.squared.q,3), sep = "")
+       cat(sprintf(ESQ), "\n", "\n", "\n")
+}
+
+cochran.test()
+
+makepPlot.ch <- function(){
+       
+   dat <- data_cochran
+   
+   dat[,1] <- factor(dat[,1])
+   data.long <- melt(dat, idvars=dat[,1])
+   x <- t(table(data.long$variable, data.long$value))
+   n <- nrow(dat)
+   prp <- round(((x/n)*100), 1)
+   prp.rev <- apply(prp, 1, rev)
+   
+   par(mar=c(5,6,2,4))
+   barplot(t(prp.rev), hor=1, las=1, xlab="Percentage",main = 'Proporsi data')
+   legend("bottomright", legend=rownames(x), fill=gray.colors(nrow(x)))
+}
+
+makepPlot.ch()
+```
+
+
+
+**Pemodelan Friedman**
+
+
+```{r}
+describeBy(data_fried[,3], data_fried[,2])
+
+fried.ranking <- function() {
+   ranked <- rank(data_fried[,3])
+   data <- data.frame(data_fried[,2], ranked)
+   n <- round(tapply(data[,2], data[,1], length),2)
+   m <- round(tapply(data[,2], data[,1], mean),2)
+   t <- round(tapply(data[,2], data[,1], sum),2)
+   ranks <- data.frame(n, m, t)
+   colnames(ranks) <- c("n","Rank Mean","Rank Sum")
+   print(ranks)
+}
+
+fried.ranking()
+
+fried.test <- function() {
+   data_video_score = as.matrix(data_fried)
+   result <- friedman.test(data_video_score)
+   print(result)
+}
+
+friedman.boxPlot <- function(){
+   dat <- data_fried_base_table[,-1]
+   boxplot(dat, las=1, horizontal = TRUE, main = 'Perbadingan Score Tiap Video')
+   beeswarm(dat, col = 4, pch = 16, vert = TRUE,  add = TRUE)
+}
+
+friedman.boxPlot()
+```
